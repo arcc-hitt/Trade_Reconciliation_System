@@ -11,6 +11,8 @@ This Python-based trade reconciliation system performs the following tasks:
    - Trades exceeding or below client orders.
 - 🗄️ **Stores data in a database** and generates structured reports.
 - ⏳ **Automates execution** using Windows Task Scheduler or Linux cron jobs.
+- 🌐 **Provides APIs** to trigger reconciliation on demand and fetch broker rankings.
+- ⭐ **Implements a broker ranking system** to evaluate execution quality based on slippage and total costs.
 
 ---
 ## Use Cases & Importance
@@ -19,6 +21,7 @@ This Python-based trade reconciliation system performs the following tasks:
 - 📈 **Brokerage Firms**: Ensures accuracy in trade execution by reconciling broker-reported trades with client orders.
 - 📜 **Regulatory Compliance**: Helps in audit and compliance by maintaining accurate trade records and reconciliation reports.
 - 💼 **Portfolio Management**: Assists fund managers in tracking executed trades versus planned orders, minimizing discrepancies.
+- 🔎 **Broker Ranking Analysis**: Enables users to rank brokers based on execution slippage and cost efficiency.
 
 ### **Importance of This Project**
 - 🔧 **Reduces Manual Effort**: Automates reconciliation, reducing the need for human intervention.
@@ -32,16 +35,58 @@ This Python-based trade reconciliation system performs the following tasks:
 
 ```
 |-- trade_reconciliation/
+    |-- broker_emails/        # Save .eml files here
     |-- scripts/
         |-- extract_trades.py      
         |-- reconcile_trades.py    
         |-- generate_reports.py    
         |-- run_reconciliation.py  
+    |-- app.py
     |-- trades.db              
-    |-- reports/               # Generated CSV reports
+    |-- reports/              # Generated CSV reports
 ```
 
 ---
+## **APIs Implemented**
+### **Trigger Reconciliation**
+- **Endpoint**: `/trigger-reconciliation`
+- **Method**: `POST`
+- **Description**: Triggers the reconciliation process on demand.
+- **Response**:
+  ```json
+  {
+    "status": "success",
+    "message": "Reconciliation and report generation completed."
+  }
+  ```
+
+### **Broker Ranking**
+- **Endpoint**: `/broker-ranking`
+- **Method**: `GET`
+- **Description**: Fetches a ranking of brokers based on execution quality, including metrics like slippage and total cost.
+- **Response**:
+  ```json
+  {
+    "status": "success",
+    "rankings": [
+      {
+        "broker_id": "BROKER1",
+        "avg_slippage": 1.2,
+        "total_cost": 45000.5,
+        "trade_count": 12
+      },
+      {
+        "broker_id": "BROKER2",
+        "avg_slippage": 2.5,
+        "total_cost": 52000.0,
+        "trade_count": 8
+      }
+    ]
+  }
+  ```
+
+---
+
 ## **Learnings from This Project**
 Through this project, I have gained valuable insights into:
 - 🗃️ **Database Management**: Gained experience in handling SQLite databases, executing queries efficiently, and structuring data for reconciliation.
@@ -52,6 +97,8 @@ Through this project, I have gained valuable insights into:
 - 🤖 **Automation Techniques**: Implemented automation using Task Scheduler and cron jobs to ensure timely execution of reconciliation tasks.
 - 📊 **Report Generation**: Built structured CSV reports for matched and unmatched trades, ensuring data integrity for audits.
 - 🛠️ **Code Optimization**: Improved modularity, efficiency, and scalability of the reconciliation process for future enhancements.
+- 🌐 **API Development**: Designed and implemented RESTful APIs for live reconciliation execution and broker ranking analysis.
+- ⭐ **Broker Evaluation**: Developed a ranking system to evaluate broker performance based on execution quality and cost efficiency.
 
 ---
 ## **Automation & Scheduling**
@@ -108,7 +155,7 @@ crontab -l
 ### **1. Install Dependencies**
 Ensure Python and required libraries are installed:
 ```bash
-pip install pandas sqlite3
+pip install pandas sqlite3 flask openpyxl
 ```
 
 ### **2. Execute the Script Manually**
@@ -121,5 +168,13 @@ This will:
 - 🗄️ Store results in the database.
 - 📊 Generate reports.
 
----
+### **3. Start the Flask API**
+Run the `app.py` script to start the API:
+```bash
+python app.py
+```
+Access the API endpoints via Postman or a web browser:
+- Trigger reconciliation: `POST http://127.0.0.1:5000/trigger-reconciliation`
+- Fetch broker rankings: `GET http://127.0.0.1:5000/broker-ranking`.
 
+---
