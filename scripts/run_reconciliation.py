@@ -16,5 +16,6 @@ if __name__ == "__main__":
     
     logging.info("Generating reports...")
     generate_reports.generate_reports("trades.db")
+    generate_reports.generate_broker_ranking_report("trades.db")
     
     logging.info("Reconciliation process completed successfully.")

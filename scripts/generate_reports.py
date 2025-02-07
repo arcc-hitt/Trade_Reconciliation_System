@@ -34,3 +34,22 @@ def generate_reports(db_path):
     broker_summary.to_csv("reports/broker_summary.csv", index=False)
     conn.close()
     logging.info("Reports generated successfully.")
+
+def generate_broker_ranking_report(db_path):
+    """
+    Generate a broker ranking report based on execution quality.
+    """
+    conn = sqlite3.connect(db_path)
+    broker_ranking_query = """
+        SELECT broker_id,
+               AVG(execution_slippage) AS avg_slippage,
+               SUM(total_cost) AS total_cost,
+               COUNT(*) AS trade_count
+        FROM reconciliation_results
+        GROUP BY broker_id
+        ORDER BY avg_slippage ASC, total_cost ASC;
+    """
+    broker_rankings = pd.read_sql_query(broker_ranking_query, conn)
+    broker_rankings.to_csv("reports/broker_ranking.csv", index=False)
+    conn.close()
+    logging.info("Broker ranking report generated.")
